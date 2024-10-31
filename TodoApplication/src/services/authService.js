@@ -3,13 +3,36 @@ import axios from 'axios';
 
 export class AuthService{
 
-    // async signup(){
-
-    // }
-
-    async login(username, email){
+    async signup({name, username, email, phone, website}){
         try {
-            return await axios.get(conf.api_url+"?username="+ username + "&" + "email" + email, {
+            const userData = await axios.post(conf.api_url+"/users",
+            {
+                "name": name,
+                "username": username,
+                "email": email,
+                "phone": phone,
+                "website": website,
+            },
+            {
+                headers: {
+                    "X-OpenAPIHub-Key": conf.api_key
+                }
+            });
+            if(userData){
+                return this.login({username,email})
+            }else{
+                return userData;
+            }
+            
+        } catch (error) {
+            console.log("Error while signup :: error :: ", error);
+            throw error;
+        }
+    }
+
+    async login({username, email}){
+        try {
+            return await axios.get(conf.api_url+"/users"+"?username="+ username + "&" + "email" + email, {
                 headers: {
                     "X-OpenAPIHub-Key": conf.api_key
                 }
